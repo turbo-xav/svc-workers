@@ -52,3 +52,21 @@ Dans la console
     - On lui demande de forcer avec "self.skipWaiting();" durant la phase d'install
 
 
+### event.waituntil
+
+- La méthode "event.waitUntil" est généralement appelée une seule fois par événement pour prolonger sa durée de vie jusqu'à ce que des opérations asynchrones spécifiques soient terminées. Cela dit, il est important de construire les promesses de manière à couvrir toutes les opérations asynchrones nécessaires pour cet événement.
+
+### Ajout d'entête dans une requête
+  `const modifiedRequest = new Request(event.request, {
+  headers: new Headers({
+  ...event.request.headers,
+  mode: 'cors', // Activer CORS pour cette requête
+  credentials: 'include', // Inclure les cookies et les informations d'authentification
+  'Authorization': 'Bearer '+token // Ajouter un en-tête personnalisé
+  })
+  });
+  //Lancement requête
+  const response = await fetch(modifiedRequest);`
+        
+  
+  

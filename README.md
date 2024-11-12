@@ -1,27 +1,54 @@
-# ServiceWorkerTest
+# Exemples
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 18.2.11.
+## static de service worker 
 
-## Development server
+### Répertoire examples
+`cd examples`
+`npm i -g  http-server`
+`http-server`
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+Lancer l'url : http://localhost:8080
 
-## Code scaffolding
+## Les différentes étapes
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+### Installation : install
+Le service worker est téléchargé, puis son événement install est déclenché. À cette étape, vous pouvez pré-cacher des ressources critiques pour votre application.
+### Waiting (En attente)
+Si un service worker plus ancien est déjà actif et en contrôle des pages, le nouveau service worker reste en état "waiting" jusqu'à ce que l'ancien soit arrêté
+### Activation : activate
 
-## Build
+#### Prise de contrôle 
+Une fois qu'aucun ancien service worker n'est actif, le nouveau service worker passe à l'état d'activation.
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+#### Purge des caches obsolètes
+Il est commun d'utiliser cet événement pour supprimer des caches obsolètes.
 
-## Running unit tests
+#### Migration de données
+Si nécessaire, vous pouvez migrer ou mettre à jour des données.
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+### Activated (Activé)
+Le service worker est maintenant activé et en contrôle des pages. Il peut maintenant intercepter les requêtes réseau et gérer la mise en cache.
 
-## Running end-to-end tests
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+## Utilisation 
 
-## Further help
+Dans la console
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+### Cas 1 :
+- Réseau -> "Désactiver le cache"
+- Application -> Service Worker -> Cocher "Mettre à jour lors du chargement" 
+  => si on veut que le Svc worker soit misà jour à chaque reload
+  => A chaque reload les étapes suivantes sont réexécutées 
+    - install
+    - activate
+    - fetch
+
+
+### Cas 2 :
+- Application -> Service Worker -> Décocher "Mettre à jour lors du chargement"
+  => Le service worker ne sera mis à jour que si
+    - Il change et qu'aucun onglet ne l'utilise encore.
+    ou
+    - On lui demande de forcer avec "self.skipWaiting();" durant la phase d'install
+
+

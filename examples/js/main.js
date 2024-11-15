@@ -17,7 +17,7 @@ if ('serviceWorker' in navigator) {
         currentServiceWorker = getCurrentServiceWorker(registration);
       });
 
-        currentServiceWorker.addEventListener('message', (event) => {
+        navigator.serviceWorker.addEventListener('message', (event) => {
           console.log('Received message from Service Worker:', event.data);
         });
 
@@ -29,7 +29,7 @@ if ('serviceWorker' in navigator) {
 
 // Fonction pour suivre l'état d'installation
 const trackInstallationState = (worker, str) => {
-  console.warn('trackInstallationState', str);
+  //console.warn('trackInstallationState', str);
   worker.addEventListener('statechange', () => {
     switch (worker.state) {
       case 'installing':

@@ -14,12 +14,13 @@ self.addEventListener('install', (event) => {
   //console.warn('svc worker install 3');
 });
 
-self.addEventListener('activate', async () => {
+self.addEventListener('activate', async (event) => {
   console.warn('svc worker is activated');
-  self.clients.claim().then(() => {
+  /*self.clients.claim().then(() => {
     sendMessageToClients('Service Worker is activated and ready.');
-  });
-
+  });*/
+  event.waitUntil(self.clients.claim());
+  sendMessageToClients('Service Worker is activated and ready.');
   //event.waitUntil(listAllUrlFromCacheThenDeleteImageFromCacheAndListAllUrlFromCache());
 });
 

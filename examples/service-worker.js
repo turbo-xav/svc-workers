@@ -27,7 +27,7 @@ self.addEventListener('activate', async (event) => {
 
 
 
-self.addEventListener('fetch', async (event) => {
+/*self.addEventListener('fetch', async (event) => {
   sendMessageToClients('Service Worker is trying to fetch :'+ event.request.url);
   event.respondWith(
     caches.match(event.request).then((response) => {
@@ -41,8 +41,60 @@ self.addEventListener('fetch', async (event) => {
       }
     })
   );
-});
+});*/
 
+// Dans votre fichier service-worker.js
+
+self.addEventListener('fetch', event => {
+  if (event.request.method === 'POST' && event.request.url.includes('3000')) {
+    console.warn('POST detecté sur le port 3000')
+    event.respondWith(
+      (async () => {
+        try {
+          const clonedRequest = event.request.clone();
+          const requestBody = await clonedRequest.json();
+
+          // Vous pouvez manipuler les données de la requête ici
+          console.log('Payload POST reçu:', requestBody);
+
+          const modifiedRequest = new Request(event.request.url, {
+            method: 'POST',
+            headers: event.request.headers,
+            body: JSON.stringify({
+              ...requestBody,
+              additionalData: 'added by service worker' // Exemple de modification de requête
+            })
+          });
+
+          const response = await fetch(modifiedRequest);
+
+          if (!response.ok) {
+            throw new Error('Erreur réseau');
+          }
+
+          const responseBody = await response.json();
+
+          // Vous pouvez manipuler les données de la réponse ici
+          console.log('Réponse POST reçue:', responseBody);
+
+          return new Response(JSON.stringify(responseBody), {
+            headers: response.headers
+          });
+
+        } catch (error) {
+          console.error('Erreur durant la requête POST:', error);
+          return new Response('{"error": "Quelque chose a mal tourné"}', {
+            headers: { 'Content-Type': 'application/json' },
+            status: 500
+          });
+        }
+      })()
+    );
+  } else {
+    // Pour les autres requêtes, procéder normalement
+    event.respondWith(fetch(event.request));
+  }
+});
 
 sendRequestWithBearerAndModifyUsersJson = async (event) => {
   try {
